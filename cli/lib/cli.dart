@@ -4,8 +4,26 @@ import "package:fast_gbk/fast_gbk.dart";
 
 // 构建apk
 Future<void> buildAPK(String src) async {
-  run("flutter", ["clean"], pwd: src);
+  _config();
   run("flutter", ["build", "apk"], pwd: src);
+}
+
+Future<void> doctor() async {
+  _config();
+  run("flutter", ["doctor", "-v"]);
+}
+
+Future<void> clean(String src) async {
+  run("flutter", ["clean"], pwd: src);
+}
+
+Future<void> _config() async {
+  run("flutter", ["config", "--jdk-dir", _getJavaHome()]);
+  run("flutter", ["config", "--list"]);
+}
+
+String _getJavaHome() {
+  return "${_getSdkPath()}/java";
 }
 
 // 执行命令
@@ -24,8 +42,9 @@ Future<int> run(String command, List<String> args, {String? pwd}) async {
     environment: {
       'PATH': paths.join(";"),
       "ANDROID_SDK_ROOT": "$sdkPath\\android",
-      "JAVA_HOME": "$sdkPath\\java",
+      "JAVA_HOME": _getJavaHome(),
       "PUB_HOSTED_URL": "https://pub.flutter-io.cn",
+      "FLUTTER_STORAGE_BASE_URL": "https://storage.flutter-io.cn",
     },
     runInShell: true,
     workingDirectory: pwd,

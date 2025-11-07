@@ -10,6 +10,7 @@ void main(List<String> arguments) async {
     ..addOption("name", help: "apk的名字", valueHelp: "string")
     ..addOption("icon", help: "apk icon路径", valueHelp: "path")
     ..addFlag('doctor', help: "检查环境", defaultsTo: false, negatable: false)
+    ..addFlag('clean', help: "清理", defaultsTo: false, negatable: false)
     ..addFlag(
       "help",
       abbr: "h",
@@ -27,17 +28,25 @@ void main(List<String> arguments) async {
     }
     // 检查环境
     if (argResults['doctor']) {
-      await run("echo", ["%JAVA_HOME%"]);
-      await run("java", ["-version"]);
-      await run("flutter", ["doctor", "-v"]);
+      doctor();
+      return;
+    }
+    // 清理环境
+    if (argResults['clean']) {
+      if (argResults['src'] == null) {
+        print("必须传入源码目录src");
+        return;
+      }
+      clean(argResults['src']);
       return;
     }
     // 执行打包命令
-    if (argResults['src'] == null) {
-      print("请传入源码目录 --src=<path>");
+    if (argResults['src'] != null) {
+      buildAPK(argResults['src']);
       return;
     }
-    buildAPK(argResults['src']);
+    print('用法: cli --src=<path> ');
+    print(parser.usage);
   } on FormatException catch (e) {
     print('参数错误: ${e.message}');
     print('使用 --help 查看用法');
