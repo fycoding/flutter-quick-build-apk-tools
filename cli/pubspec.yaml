@@ -11,6 +11,8 @@ dependencies:
   path: ^1.9.0
   fast_gbk: ^1.0.0
   args: ^2.7.0
+  http: ^1.5.0
+  image: ^4.5.4
 
 dev_dependencies:
   lints: ^6.0.0

@@ -10,6 +10,7 @@ void main(List<String> arguments) async {
     ..addOption("name", help: "apk的名字", valueHelp: "string")
     ..addOption("icon", help: "apk icon路径", valueHelp: "path")
     ..addFlag('doctor', help: "检查环境", defaultsTo: false, negatable: false)
+    ..addFlag('license', help: "android证书", defaultsTo: false, negatable: false)
     ..addFlag('clean', help: "清理", defaultsTo: false, negatable: false)
     ..addFlag(
       "help",
@@ -24,6 +25,11 @@ void main(List<String> arguments) async {
     if (argResults['help']) {
       print('用法: cli --src=<path> ');
       print(parser.usage);
+      return;
+    }
+    // 检查环境
+    if (argResults['license']) {
+      license();
       return;
     }
     // 检查环境
@@ -42,7 +48,13 @@ void main(List<String> arguments) async {
     }
     // 执行打包命令
     if (argResults['src'] != null) {
-      buildAPK(argResults['src']);
+      buildAPK(
+        argResults['src'],
+        argResults["appid"],
+        argResults["name"],
+        argResults["icon"],
+        argResults["out"],
+      );
       return;
     }
     print('用法: cli --src=<path> ');
