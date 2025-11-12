@@ -8,6 +8,7 @@ var needModifyFiles = [
   r"android\app\build.gradle",
   r"android\app\src\main\AndroidManifest.xml",
   r"android\app\src\main\AndroidManifest-china.xml",
+  r"lib\yk_bb\configuration_sdk.dart",
 ];
 var iconSrcPath = r"android\app\src\main\res\mipmap-hdpi\ic_launcher.png";
 var appPath = r"build\app\outputs\flutter-apk\app-release.apk";
@@ -19,6 +20,7 @@ Future<void> buildAPK(
   String? name,
   String? iconPath,
   String? out,
+  String? appOrg,
 ) async {
   final logFile = File(
     '${_getSdkPath()}/../logs/${_getFormattedTimestamp()}.log',
@@ -29,7 +31,7 @@ Future<void> buildAPK(
   // 创建备份
   backup(src);
   // 修改文件
-  modify(src, appID, name);
+  modify(src, appID, name, appOrg);
   // 修改icon
   replaceIcon(src, iconPath);
   // 执行打包命令
@@ -105,9 +107,15 @@ void restore(String src) {
 }
 
 // 修改文件
-void modify(String src, String? appId, String? name) {
+void modify(String src, String? appId, String? name, String? appOrg) {
   if (appId != null) {
     _replaceApplicationId("$src/${needModifyFiles[0]}", appId);
+    _replaceApplicationIdForDartSrc(
+      "$src/${needModifyFiles[3]}",
+      appId,
+      name,
+      appOrg,
+    );
   }
   if (name != null) {
     _replaceAppLabel("$src/${needModifyFiles[1]}", name);
@@ -135,6 +143,36 @@ void copyApk(String src, String? targetPath) {
   if (sourceFile.existsSync()) {
     sourceFile.copySync("$targetPath/app-release.apk");
   }
+}
+
+void _replaceApplicationIdForDartSrc(
+  String filePath,
+  String newApplicationId,
+  String? appName,
+  String? appOrg,
+) {
+  final file = File(filePath);
+  if (!file.existsSync()) return;
+
+  final content = file.readAsStringSync();
+  var updatedContent = content.replaceAll(
+    RegExp(r"packageName\s+=\s+'.*?'"),
+    'packageName="$newApplicationId"',
+  );
+  if (appName != null) {
+    updatedContent = updatedContent.replaceAll(
+      RegExp(r"appName\s+=\s+'.*?'"),
+      'packageName="$appName"',
+    );
+  }
+  if (appName != null) {
+    updatedContent = updatedContent.replaceAll(
+      RegExp(r"appOrganization\s+=\s+'.*?'"),
+      'packageName="$appOrg"',
+    );
+  }
+
+  file.writeAsStringSync(updatedContent);
 }
 
 void _replaceApplicationId(String filePath, String newApplicationId) {

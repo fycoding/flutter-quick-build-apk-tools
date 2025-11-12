@@ -111,6 +111,7 @@ class FileScanner {
         jsonData["name"],
         jsonData["icon"],
         directoryPath,
+        jsonData["company_name"],
       );
       if (!apkFile.existsSync()) {
         _log("构建失败");

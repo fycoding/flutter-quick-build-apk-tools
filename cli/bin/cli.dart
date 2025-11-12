@@ -8,6 +8,7 @@ void main(List<String> arguments) async {
     ..addOption("out", help: "apk输出目录", valueHelp: "path")
     ..addOption("appid", help: "apk applicationId", valueHelp: "string")
     ..addOption("name", help: "apk的名字", valueHelp: "string")
+    ..addOption("app-org", help: "apk的组织", valueHelp: "string")
     ..addOption("icon", help: "apk icon路径", valueHelp: "path")
     ..addFlag('doctor', help: "检查环境", defaultsTo: false, negatable: false)
     ..addFlag('license', help: "android证书", defaultsTo: false, negatable: false)
@@ -54,6 +55,7 @@ void main(List<String> arguments) async {
         argResults["name"],
         argResults["icon"],
         argResults["out"],
+        argResults["app-org"],
       );
       return;
     }

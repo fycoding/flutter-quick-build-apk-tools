@@ -13,5 +13,5 @@ void main(List<String> args) {
   });
 
   // 启动扫描
-  scanner.start(intervalSeconds: 3);
+  scanner.start();
 }
