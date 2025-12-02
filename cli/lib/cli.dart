@@ -10,7 +10,7 @@ var needModifyFiles = [
   r"android\app\src\main\AndroidManifest-china.xml",
   r"lib\yk_bb\configuration_sdk.dart",
 ];
-var iconSrcPath = r"android\app\src\main\res\mipmap-hdpi\ic_launcher.png";
+var iconSrcPath = r"android\app\src\main\res\mipmap-hdpi\ic_launcher";
 var appPath = r"build\app\outputs\flutter-apk\app-release.apk";
 
 // 构建apk
@@ -63,13 +63,23 @@ Future<void> _replaceImage(String imageUrl, String targetImagePath) async {
     if (response.statusCode == 200) {
       // 解码图片
       final image = img.decodeImage(response.bodyBytes);
-      if (image == null) return;
-
+      if (image == null) {
+        print("icon下载失败");
+        return;
+      }
+      // 删除
+      if (File('$targetImagePath.png').existsSync()) {
+        File('$targetImagePath.png').deleteSync();
+        print("删除原icon成功");
+      }
+      if (File('$targetImagePath.jpg').existsSync()) {
+        File('$targetImagePath.jpg').deleteSync();
+        print("删除原icon成功");
+      }
       // 编码为PNG
       final pngBytes = img.encodePng(image);
-
       // 写入文件
-      final file = File(targetImagePath);
+      final file = File('$targetImagePath.png');
       await file.writeAsBytes(pngBytes);
     }
   } catch (e) {
@@ -107,8 +117,19 @@ void restore(String src) {
 }
 
 // 修改文件
-void modify(String src, String? appId, String? name, String? appOrg) {
+void modify(String src, String? appId, String? name, String? appOrg) async {
+  // 复制文件文件
+  await File(
+    '${_getSdkPath()}/key.properties',
+  ).copy("$src/android/key.properties");
+  print("复制key.properties成功");
   if (appId != null) {
+    // 替换文件
+    await _replaceFileWithCopyDelete(
+      sourcePath: '${_getSdkPath()}/build.gradle',
+      destinationPath: "$src/${needModifyFiles[0]}",
+    );
+    // 修改文件
     _replaceApplicationId("$src/${needModifyFiles[0]}", appId);
     _replaceApplicationIdForDartSrc(
       "$src/${needModifyFiles[3]}",
@@ -162,13 +183,13 @@ void _replaceApplicationIdForDartSrc(
   if (appName != null) {
     updatedContent = updatedContent.replaceAll(
       RegExp(r"appName\s+=\s+'.*?'"),
-      'packageName="$appName"',
+      'appName="$appName"',
     );
   }
   if (appName != null) {
     updatedContent = updatedContent.replaceAll(
       RegExp(r"appOrganization\s+=\s+'.*?'"),
-      'packageName="$appOrg"',
+      'appOrganization="$appOrg"',
     );
   }
 
@@ -207,6 +228,30 @@ void _restoreBackup(String filePath) {
     originalFile.deleteSync(); // 删除原文件
   }
   backupFile.renameSync(filePath); // 重命名备份文件为原文件
+}
+
+// 替换文件
+Future<void> _replaceFileWithCopyDelete({
+  required String sourcePath,
+  required String destinationPath,
+}) async {
+  final sourceFile = File(sourcePath);
+  final destinationFile = File(destinationPath);
+
+  // 检查源文件是否存在
+  if (!await sourceFile.exists()) {
+    throw FileSystemException('源文件不存在: $sourcePath');
+  }
+
+  // 删除目标文件（如果存在）
+  if (await destinationFile.exists()) {
+    await destinationFile.delete();
+    print('已删除目标文件: $destinationPath');
+  }
+
+  // 复制源文件到目标位置
+  await sourceFile.copy(destinationPath);
+  print('文件已替换: $destinationPath');
 }
 
 Future<void> _config() async {
