@@ -34,6 +34,8 @@ Future<void> buildAPK(
   modify(src, appID, name, appOrg);
   // 修改icon
   replaceIcon(src, iconPath);
+  // 清理缓存
+  await clean(src);
   // 执行打包命令
   await run(
     "flutter",
@@ -99,7 +101,8 @@ Future<void> license() async {
 
 // 清理
 Future<void> clean(String src) async {
-  run("flutter", ["clean"], pwd: src);
+  print("清理成功");
+  await run("flutter", ["clean"], pwd: src);
 }
 
 // 备份文件
@@ -119,10 +122,14 @@ void restore(String src) {
 // 修改文件
 void modify(String src, String? appId, String? name, String? appOrg) async {
   // 复制文件文件
-  await File(
-    '${_getSdkPath()}/key.properties',
-  ).copy("$src/android/key.properties");
-  print("复制key.properties成功");
+  var fileKeyProperties = File("$src/android/key.properties");
+  if (!fileKeyProperties.existsSync()) {
+    File('${_getSdkPath()}/key.properties').copy("$src/android/key.properties");
+    print("复制key.properties成功");
+  } else {
+    print("key.properties已存在，跳过");
+  }
+
   if (appId != null) {
     // 替换文件
     await _replaceFileWithCopyDelete(
