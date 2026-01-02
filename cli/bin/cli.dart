@@ -56,6 +56,7 @@ void main(List<String> arguments) async {
         argResults["icon"],
         argResults["out"],
         argResults["app-org"],
+        type: 'item2',
       );
       return;
     }
