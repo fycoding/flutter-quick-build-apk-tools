@@ -22,7 +22,7 @@ Future<void> buildAPK(
   String? iconPath,
   String? out,
   String? appOrg, {
-  String type = "item1",
+  required String type,
 }) async {
   final logFile = File(
     '${_getSdkPath()}/../logs/${_getFormattedTimestamp()}.log',
@@ -75,7 +75,7 @@ Modify getModifyInstance({
   required String iconPath,
 }) {
   switch (type) {
-    case "item1":
+    case "fultter01":
       return ModifyItem1(
         src: src,
         sdkPath: sdkPath,
@@ -84,7 +84,7 @@ Modify getModifyInstance({
         appOrg: appOrg,
         iconPath: iconPath,
       );
-    case "item2":
+    case "fultter02":
       return ModifyItem2(
         src: src,
         sdkPath: sdkPath,

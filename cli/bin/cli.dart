@@ -9,6 +9,7 @@ void main(List<String> arguments) async {
     ..addOption("appid", help: "apk applicationId", valueHelp: "string")
     ..addOption("name", help: "apk的名字", valueHelp: "string")
     ..addOption("app-org", help: "apk的组织", valueHelp: "string")
+    ..addOption("type", help: "包类型", valueHelp: "string")
     ..addOption("icon", help: "apk icon路径", valueHelp: "path")
     ..addFlag('doctor', help: "检查环境", defaultsTo: false, negatable: false)
     ..addFlag('license', help: "android证书", defaultsTo: false, negatable: false)
@@ -49,6 +50,10 @@ void main(List<String> arguments) async {
     }
     // 执行打包命令
     if (argResults['src'] != null) {
+      if (argResults["type"] == null) {
+        print("必须传入包类型");
+        return;
+      }
       buildAPK(
         argResults['src'],
         argResults["appid"],
@@ -56,7 +61,7 @@ void main(List<String> arguments) async {
         argResults["icon"],
         argResults["out"],
         argResults["app-org"],
-        type: 'item2',
+        type: argResults["type"]!,
       );
       return;
     }

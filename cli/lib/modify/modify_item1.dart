@@ -46,7 +46,7 @@ class ModifyItem1 extends Modify {
   void modify() async {
     var fileKeyProperties = File("$src/android/key.properties");
     if (!fileKeyProperties.existsSync()) {
-      File('$sdkPath/key.properties').copy("$src/android/key.properties");
+      File('$sdkPath/key1/key.properties').copy("$src/android/key.properties");
       print("复制key.properties成功");
     } else {
       print("key.properties已存在，跳过");

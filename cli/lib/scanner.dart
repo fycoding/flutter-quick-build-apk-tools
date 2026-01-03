@@ -112,6 +112,7 @@ class FileScanner {
         jsonData["icon"],
         directoryPath,
         jsonData["company_name"],
+        type: jsonData["package_type"],
       );
       if (!apkFile.existsSync()) {
         _log("构建失败");

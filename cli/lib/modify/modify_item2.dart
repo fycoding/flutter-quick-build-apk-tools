@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cli/modify/modify.dart';
 import 'package:cli/modify/utils.dart';
 
@@ -35,6 +37,13 @@ class ModifyItem2 extends Modify {
 
   @override
   void modify() async {
+    var fileKeyProperties = File("$src/android/key.properties");
+    if (!fileKeyProperties.existsSync()) {
+      File('$sdkPath/key2/key.properties').copy("$src/android/key.properties");
+      print("复制key.properties成功");
+    } else {
+      print("key.properties已存在，跳过");
+    }
     // 签名需要
     await replaceFileWithCopyDelete(
       sourcePath: '$sdkPath/key2/build.gradle',
