@@ -88,7 +88,7 @@ class ModifyItem1 extends Modify {
   void _replaceApplicationId(String filePath, String newApplicationId) {
     replaceTextByRegExp(
       filePath: filePath,
-      text: r'${1}aa.fycoding.com${3}',
+      text: 'applicationId "$newApplicationId"',
       regExp: RegExp(r'(applicationId\s+")(.*?)(")'),
     );
   }

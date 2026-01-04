@@ -25,8 +25,6 @@ class ModifyItem2 extends Modify {
     r"android\app\src\main\AndroidManifest.xml", // 包名、应用名
     r"lib\utils\configuration.dart", // 配置文件
   ];
-  // icon
-  var iconSrcPath = r"android\app\src\main\res\mipmap-hdpi\ic_launcher";
 
   @override
   void backup() {
@@ -64,7 +62,7 @@ class ModifyItem2 extends Modify {
   void _replaceApplicationId(String filePath, String newApplicationId) {
     replaceTextByRegExp(
       filePath: filePath,
-      text: r'${1}aa.fycoding.com${3}',
+      text: 'applicationId "$newApplicationId"',
       regExp: RegExp(r'(applicationId\s+")(.*?)(")'),
     );
   }
@@ -86,7 +84,12 @@ class ModifyItem2 extends Modify {
 
   void _replaceIcon(String src, String? iconPath) {
     if (iconPath != null) {
-      replaceImage(iconPath, "$src/$iconSrcPath");
+      for (var dpi in ['hdpi', 'mdpi', 'xhdpi', 'xxhdpi', 'xxxhdpi']) {
+        replaceImage(
+          iconPath,
+          "$src/android/app/src/main/res/mipmap-$dpi/ic_launcher",
+        );
+      }
     }
   }
 }
