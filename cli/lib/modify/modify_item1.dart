@@ -43,7 +43,7 @@ class ModifyItem1 extends Modify {
   }
 
   @override
-  void modify() async {
+  Future<void> modify() async {
     var fileKeyProperties = File("$src/android/key.properties");
     if (!fileKeyProperties.existsSync()) {
       File('$sdkPath/key1/key.properties').copy("$src/android/key.properties");

@@ -45,7 +45,7 @@ Future<void> buildAPK(
   // 创建备份
   modify.backup();
   // 修改文件
-  modify.modify();
+  await modify.modify();
   // 清理缓存
   await clean(src);
   // 执行打包命令

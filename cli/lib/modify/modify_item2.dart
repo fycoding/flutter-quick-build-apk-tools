@@ -34,7 +34,7 @@ class ModifyItem2 extends Modify {
   }
 
   @override
-  void modify() async {
+  Future<void> modify() async {
     var fileKeyProperties = File("$src/android/key.properties");
     if (!fileKeyProperties.existsSync()) {
       File('$sdkPath/key2/key.properties').copy("$src/android/key.properties");
@@ -56,7 +56,7 @@ class ModifyItem2 extends Modify {
       regExp: RegExp(r"(androidId\s+=\s+')(.*?)(')"),
     );
     // 替换ICON
-    _replaceIcon(src, iconPath);
+    await _replaceIcon(src, iconPath);
   }
 
   void _replaceApplicationId(String filePath, String newApplicationId) {
@@ -82,10 +82,10 @@ class ModifyItem2 extends Modify {
     );
   }
 
-  void _replaceIcon(String src, String? iconPath) {
+  Future<void> _replaceIcon(String src, String? iconPath) async {
     if (iconPath != null) {
       for (var dpi in ['hdpi', 'mdpi', 'xhdpi', 'xxhdpi', 'xxxhdpi']) {
-        replaceImage(
+        await replaceImage(
           iconPath,
           "$src/android/app/src/main/res/mipmap-$dpi/ic_launcher",
         );
